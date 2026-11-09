@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+
 
 const KEUNGGULAN = [
   'Kualitas & Harga Terjamin',
@@ -31,7 +31,13 @@ const fadeUpVariant = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, type: 'spring' as const, damping: 20 } }
 };
 
-const PRODUCTS = [
+type Product = {
+  name: string;
+  desc: string;
+  url: string | string[];
+};
+
+const PRODUCTS: Product[] = [
   {
     name: 'Punokawan',
     desc: `Hadirkan cita rasa tradisional yang membanggakan di setiap momen spesial bersama <strong>Befood Punokawan</strong>, beras premium terpercaya yang aman dan praktis untuk keluarga maupun kelancaran usaha Anda. Kami menjamin mutu yang selalu terjaga dengan hasil masak konsisten untuk berbagai hidangan. Dikemas secara modern dan informatif dalam pilihan 5 Kg, 10 Kg, dan 25 Kg, ketersediaan stok <strong>Befood Punokawan</strong> selalu stabil dan sangat mudah didapatkan di berbagai ritel modern terdekat.`,
@@ -64,270 +70,7 @@ const PRODUCTS = [
   },
 ];
 
-const slideVariants = {
-  enter: (dir: number) => ({
-    x: dir > 0 ? 120 : -120,
-    opacity: 0,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-  },
-  exit: (dir: number) => ({
-    x: dir > 0 ? -120 : 120,
-    opacity: 0,
-  }),
-};
-
-function ProductCarousel() {
-  const [[current, direction], setCurrent] = useState([0, 0]);
-
-  const paginate = (newDir: number) => {
-    const next = (current + newDir + PRODUCTS.length) % PRODUCTS.length;
-    setCurrent([next, newDir]);
-  };
-
-  const prod = PRODUCTS[current];
-
-  return (
-    <div style={{
-      position: 'relative',
-      borderRadius: '28px',
-      overflow: 'hidden',
-      background: 'linear-gradient(135deg, #034E7B 0%, #0a6da8 60%, #034E7B 100%)',
-      minHeight: '420px',
-    }}>
-      {/* Content */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '650px', // Increased further to safely cover the longest text
-        position: 'relative',
-        padding: '40px',
-        gap: '40px',
-        flexWrap: 'wrap',
-      }}>
-        
-        {/* Left: Product Image */}
-        <div style={{
-          flex: '1 1 340px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          position: 'relative',
-          minHeight: '340px',
-        }}>
-          {/* Glow behind product */}
-          <div style={{
-            position: 'absolute',
-            width: '260px',
-            height: '260px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%)',
-          }} />
-          <AnimatePresence mode="wait" custom={direction}>
-            {Array.isArray(prod.url) ? (
-              <motion.div
-                key={prod.name}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
-                style={{
-                  display: 'flex',
-                  gap: '16px',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  position: 'relative',
-                  zIndex: 2,
-                  width: '100%',
-                  willChange: 'transform, opacity',
-                }}
-              >
-                {prod.url.map((u, i) => (
-                  <img
-                    key={i}
-                    src={u}
-                    alt={prod.name}
-                    style={{
-                      maxHeight: '280px',
-                      maxWidth: '45%',
-                      objectFit: 'contain',
-                      filter: 'drop-shadow(0px 15px 30px rgba(0,0,0,0.3))',
-                    }}
-                  />
-                ))}
-              </motion.div>
-            ) : (
-              <motion.img
-                key={prod.url}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
-                src={prod.url}
-                alt={prod.name}
-                style={{
-                  maxHeight: '360px',
-                  maxWidth: '100%',
-                  objectFit: 'contain',
-                  position: 'relative',
-                  zIndex: 2,
-                  filter: 'drop-shadow(0px 15px 30px rgba(0,0,0,0.3))',
-                  willChange: 'transform, opacity',
-                }}
-              />
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Right: Product Info */}
-        <div style={{
-          flex: '1 1 300px',
-          maxWidth: '440px',
-          position: 'relative',
-          zIndex: 2,
-          paddingBottom: '60px', // Prevent overlap with next/prev buttons
-        }}>
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={prod.name}
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1], delay: 0.06 }}
-            >
-              <div style={{ marginBottom: '16px' }}>
-                <span style={{
-                  display: 'inline-block',
-                  backgroundColor: '#F59E0B', // Secondary Yellow/Gold Color
-                  color: '#fff',
-                  padding: '4px 12px',
-                  borderRadius: '100px',
-                  fontSize: '14px',
-                  fontWeight: 800,
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                  boxShadow: '0 4px 10px rgba(245, 158, 11, 0.3)'
-                }}>
-                  Befood
-                </span>
-              </div>
-              <h3 style={{
-                fontSize: 'clamp(1.8rem, 3vw, 2.6rem)',
-                fontWeight: 900,
-                color: '#fff',
-                lineHeight: 1.15,
-                marginBottom: '20px',
-              }}>
-                {prod.name}
-              </h3>
-              <p 
-                style={{
-                  fontSize: '15px',
-                  color: 'rgba(255,255,255,0.7)',
-                  lineHeight: 1.7,
-                  fontWeight: 500,
-                  whiteSpace: 'pre-line',
-                }}
-                dangerouslySetInnerHTML={{ __html: prod.desc }}
-              />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Navigation Buttons */}
-      <div style={{
-        position: 'absolute',
-        bottom: '28px',
-        right: '32px',
-        display: 'flex',
-        gap: '10px',
-        zIndex: 10,
-      }}>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.92 }}
-          onClick={() => paginate(-1)}
-          style={{
-            width: '48px',
-            height: '48px',
-            borderRadius: '12px',
-            border: '2px solid rgba(255,255,255,0.3)',
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            backdropFilter: 'blur(8px)',
-            color: '#fff',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.2s ease',
-          }}
-        >
-          <ChevronLeft size={22} />
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.92 }}
-          onClick={() => paginate(1)}
-          style={{
-            width: '48px',
-            height: '48px',
-            borderRadius: '12px',
-            border: 'none',
-            backgroundColor: '#E8843C',
-            color: '#fff',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.2s ease',
-          }}
-        >
-          <ChevronRight size={22} />
-        </motion.button>
-      </div>
-
-      {/* Progress dots */}
-      <div style={{
-        position: 'absolute',
-        bottom: '28px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        display: 'flex',
-        gap: '8px',
-        zIndex: 10,
-      }}>
-        {PRODUCTS.map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{
-              width: i === current ? 24 : 8,
-              backgroundColor: i === current ? '#E8843C' : 'rgba(255,255,255,0.3)',
-            }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            onClick={() => setCurrent([i, i > current ? 1 : -1])}
-            style={{
-              height: '8px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            }}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ProductScrollItem({ prod, index }: { prod: any; index: number }) {
+function ProductScrollItem({ prod }: { prod: Product }) {
   const ref = useRef<HTMLDivElement>(null);
   
   // Track scroll position of this specific product item
@@ -460,8 +203,8 @@ function ProductScrollItem({ prod, index }: { prod: any; index: number }) {
 function ProductScrollList() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '140px', marginTop: '60px' }}>
-      {PRODUCTS.map((prod, idx) => (
-        <ProductScrollItem key={prod.name} prod={prod} index={idx} />
+      {PRODUCTS.map((prod) => (
+        <ProductScrollItem key={prod.name} prod={prod} />
       ))}
     </div>
   );
@@ -579,7 +322,7 @@ export default function PassionSection() {
           </motion.div>
         </motion.div>
 
-        {/* Products Carousel Section */}
+        {/* Products Scroll Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -599,7 +342,7 @@ export default function PassionSection() {
             Products :
           </h2>
 
-          {/* <ProductCarousel /> */}
+
           <ProductScrollList />
         </motion.div>
 
