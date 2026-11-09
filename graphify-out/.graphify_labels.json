@@ -1,0 +1,23 @@
+{
+  "0": "compilerOptions",
+  "1": "compilerOptions",
+  "2": "devDependencies",
+  "3": "dependencies",
+  "4": "App.tsx",
+  "5": "package.json",
+  "6": "What You Must Do When Invoked",
+  "7": "tsconfig.json",
+  "8": "vite.config.ts",
+  "9": "/graphify",
+  "10": "graphify reference: extra exports and benchmark",
+  "11": "graphify reference: query, path, explain",
+  "12": "graphify reference: add a URL and watch a folder",
+  "13": "graphify reference: commit hook and native CLAUDE.md integration",
+  "14": "graphify reference: incremental update and cluster-only",
+  "15": "React + TypeScript + Vite",
+  "16": "graphify reference: GitHub clone and cross-repo merge",
+  "17": "graphify reference: transcribe video and audio",
+  "18": "CLAUDE.md",
+  "19": ".claude/CLAUDE.md",
+  "20": "extraction-spec.md"
+}
